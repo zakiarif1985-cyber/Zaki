@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17372d">
+<meta name="description" content="Zaki Daily Progress — kesihatan, keluarga dan pendapatan.">
+<link rel="manifest" href="manifest.json">
+<title>Zaki Daily Progress</title>
+<style>
+:root{--green:#17372d;--green2:#245541;--mint:#dff1e6;--bg:#f3f7f4;--ink:#17251e;--muted:#64746b;--line:#dce7df;--white:#fff;--gold:#d6a64a;--red:#a43c36}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,var(--green),#2c6049);color:white;padding:22px 18px 24px;border-radius:0 0 24px 24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:13px;letter-spacing:1.6px;font-weight:800;color:#c8e6d2}.date{font-size:12px;color:#d7e9dd}
+h1{font-size:25px;margin:18px 0 4px}header p{margin:0;color:#d7e9dd;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.stat{background:#ffffff18;border:1px solid #ffffff24;border-radius:15px;padding:12px}.stat small{display:block;color:#d4e7da}.stat strong{font-size:22px}
+main{max-width:760px;margin:auto;padding:15px 14px 95px}.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 13px;position:sticky;top:0;background:var(--bg);z-index:5}
+.tab{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 13px;white-space:nowrap;color:var(--green);font-weight:700}.tab.active{background:var(--green);color:white;border-color:var(--green)}
+.panel{display:none}.panel.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:15px;margin:0 0 12px;box-shadow:0 3px 12px #193c2710}
+h2{font-size:18px;margin:0 0 11px;color:var(--green)}h3{font-size:15px;margin:0 0 8px}.muted,small{color:var(--muted)}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:13px;font-weight:700;color:#41544a;margin:9px 0 5px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#fbfdfb;font:inherit;color:var(--ink)}textarea{min-height:70px;resize:vertical}
+button{font:inherit;cursor:pointer}.primary{background:var(--green);color:white;border:0;border-radius:11px;padding:11px 15px;font-weight:750}.secondary{background:var(--mint);color:var(--green);border:0;border-radius:10px;padding:9px 12px;font-weight:700}.danger{background:#fff0ef;color:var(--red);border:0;border-radius:10px;padding:9px 12px}
+.check{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #edf2ee}.check:last-child{border:0}.check input{width:20px;height:20px;accent-color:var(--green)}.check span{flex:1}
+.progress{height:9px;background:#e8f0ea;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:#39845d;width:0}
+.pill{font-size:11px;background:var(--mint);color:var(--green);padding:4px 8px;border-radius:99px;font-weight:800}
+.metric{font-size:23px;font-weight:800;color:var(--green)}.entry{padding:10px 0;border-bottom:1px solid #edf2ee}.entry:last-child{border:0}
+canvas{width:100%;height:190px;display:block}.notice{background:#fff8e8;border:1px solid #f1dfb5;padding:11px;border-radius:12px;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+@media(min-width:600px){main{padding-left:22px;padding-right:22px}.grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top"><div class="brand">ZAKI DAILY PROGRESS</div><div class="date" id="today"></div></div>
+ <h1>Langkah kecil. Perubahan besar.</h1><p>Kesihatan · Keluarga · Pendapatan</p>
+ <div class="stats">
+  <div class="stat"><small>Berat terkini</small><strong id="headerWeight">74 kg</strong></div>
+  <div class="stat"><small>Sasaran income sampingan</small><strong>RM3,000+</strong></div>
+ </div>
+</header>
+<main>
+<nav class="tabs">
+ <button class="tab active" data-tab="home">Hari ini</button><button class="tab" data-tab="health">Kesihatan</button><button class="tab" data-tab="routine">Rutin</button><button class="tab" data-tab="income">Pendapatan</button><button class="tab" data-tab="report">Laporan</button>
+</nav>
+<section id="home" class="panel active">
+ <div class="card">
+  <div class="row"><h2>Checklist harian</h2><span class="pill" id="checkCount">0/7 siap</span></div>
+  <div class="progress"><i id="checkBar"></i></div>
+  <div id="checks"></div>
+ </div>
+ <div class="card">
+  <h2>Semangat hari ini</h2>
+  <p style="font-weight:750;color:var(--green);font-size:17px">Bangun, Zaki. Jangan tunggu semangat datang — mulakan dengan satu tindakan kecil.</p>
+  <p class="muted">Kau tak perlu sempurna. Konsisten sedikit demi sedikit lebih baik daripada berhenti terus.</p>
+ </div>
+ <div class="card">
+  <h2>Nota ringkas hari ini</h2><textarea id="dailyNote" placeholder="Apa yang menjadi hari ini? Apa yang perlu dibaiki?"></textarea><button class="primary" style="margin-top:9px" onclick="saveNote()">Simpan nota</button>
+ </div>
+</section>
+<section id="health" class="panel">
+ <div class="card">
+  <h2>Rekod kesihatan</h2>
+  <div class="grid">
+   <div><label>Berat (kg)</label><input id="weight" type="number" step=".1" placeholder="74"></div>
+   <div><label>Tempoh senaman (minit)</label><input id="minutes" type="number" min="0" placeholder="20"></div>
+   <div><label>Jenis aktiviti</label><select id="activity"><option>Rehat / tiada senaman</option><option>Jalan kaki</option><option>Senaman kekuatan</option><option>Regangan / mobiliti</option><option>Berbasikal</option><option>Lain-lain</option></select></div>
+   <div><label>Tenaga badan</label><select id="energy"><option>Sederhana</option><option>Rendah / letih</option><option>Baik / bertenaga</option></select></div>
+  </div>
+  <label>Ada sakit atau gejala luar biasa?</label><input id="symptoms" placeholder="Contoh: tiada / lutut lenguh / pening">
+  <label>Jam tidur (anggaran)</label><input id="sleep" type="number" step=".5" min="0" max="24" placeholder="7">
+  <button class="primary" style="margin-top:12px" onclick="saveHealth()">Simpan rekod kesihatan</button>
+ </div>
+ <div class="card"><h2>Rekod terkini</h2><div id="healthHistory" class="muted">Belum ada rekod.</div></div>
+ <div class="notice">Mulakan secara ringan. Hentikan senaman jika sakit dada, pening, sesak nafas luar biasa atau sakit yang ketara. Dapatkan nasihat perubatan jika gejala membimbangkan.</div>
+</section>
+<section id="routine" class="panel">
+ <div class="card">
+  <h2>Rutin pagi</h2><div class="notice"><b>4:30 pagi</b> — alarm telefon. Alarm sebenar perlu ditetapkan dalam aplikasi Clock Android.</div>
+  <div id="morning"></div>
+ </div>
+ <div class="card">
+  <h2>Rutin malam</h2><p class="muted">Versi biasa 5–7 minit; versi malas 3 minit pun dikira.</p><div id="night"></div>
+  <div class="notice">Jika terlalu letih atau mengantuk, rehat dan tidur. Jangan paksa senaman. Cuba sasarkan tidur mencukupi, sekitar 7–9 jam untuk kebanyakan orang dewasa.</div>
+ </div>
+</section>
+<section id="income" class="panel">
+ <div class="card">
+  <h2>Rekod pendapatan sampingan</h2>
+  <label>Projek</label><select id="project"><option>MenuSpark Studio</option><option>Warung & Cafe Profit Tracker</option><option>Servis poster / kandungan</option><option>Lain-lain</option></select>
+  <div class="grid"><div><label>Jualan diterima (RM)</label><input id="revenue" type="number" min="0" step=".01" placeholder="0"></div><div><label>Kos / yuran (RM)</label><input id="cost" type="number" min="0" step=".01" placeholder="0"></div></div>
+  <label>Tindakan kecil hari ini</label><textarea id="action" placeholder="Contoh: siapkan satu post LinkedIn / hubungi seorang prospek"></textarea>
+  <button class="primary" style="margin-top:10px" onclick="saveIncome()">Simpan pendapatan</button>
+ </div>
+ <div class="card">
+  <div class="row"><div><small>Untung bersih terkumpul</small><div class="metric" id="totalProfit">RM0.00</div></div><div><small>Jualan terkumpul</small><div class="metric" id="totalSales">RM0.00</div></div></div>
+  <div id="incomeHistory"></div>
+ </div>
+</section>
+<section id="report" class="panel">
+ <div class="card">
+  <h2>Laporan kemajuan</h2>
+  <div class="grid">
+   <div><small>Hari direkod</small><div class="metric" id="daysLogged">0</div></div>
+   <div><small>Jumlah minit senaman</small><div class="metric" id="totalMinutes">0</div></div>
+   <div><small>Untung sampingan</small><div class="metric" id="reportProfit">RM0</div></div>
+  </div>
+ </div>
+ <div class="card"><h3>Aktiviti senaman (7 rekod terkini)</h3><canvas id="chart" width="600" height="220"></canvas></div>
+ <div class="card">
+  <h3>Backup dan pemulihan data</h3><p class="muted">Data disimpan pada telefon ini dalam browser. Eksport backup secara berkala, terutama sebelum tukar telefon atau kosongkan data browser.</p>
+  <div class="row"><button class="secondary" onclick="exportData()">Eksport backup</button><label class="secondary" style="margin:0;cursor:pointer">Import backup<input type="file" accept="application/json" style="display:none" onchange="importData(event)"></label></div>
+  <button class="danger" style="margin-top:12px" onclick="clearData()">Padam semua data</button>
+ </div>
+</section>
+<footer>Zaki Daily Progress · Versi 1.0 · Data disimpan pada peranti ini</footer>
+</main>
+<script>
+const KEY='zakiDailyProgressV1';
+const defaults={checks:{},health:[],income:[],notes:{}};
+let db=load();
+function load(){try{return {...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return structuredClone(defaults)}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function dateKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function money(n){return 'RM'+Number(n||0).toFixed(2)}
+document.getElementById('today').textContent=new Date().toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const checkItems=['Bangun 4:30 pagi','Solat dan persediaan pagi','Senaman / pergerakan pagi','Sarapan anak-anak','Minum air secukupnya','Projek pendapatan 30 minit','Regangan malam / persediaan tidur'];
+const morningItems=['Bangun 4:30 pagi','4:30–4:55: persediaan daging perniagaan','5:00–5:20: senaman ringan (ikut kemampuan)','5:30: mandi dan bersiap','5:55: Subuh'];
+const nightItems=['Pusing bahu perlahan — 1 minit','Regangan sisi badan — 1 minit','Cat-cow — 1 minit','Tarik lutut ke dada — 1 minit','Pernafasan perlahan — 2 minit'];
+function makeChecks(items,kind){return items.map((s,i)=>`<label class="check"><input type="checkbox" ${db.checks[dateKey()]?.[kind+i]?'checked':''} onchange="toggleCheck('${kind+i}',this.checked)"><span>${s}</span></label>`).join('')}
+function toggleCheck(k,v){db.checks[dateKey()]??={};db.checks[dateKey()][k]=v;localStorage.setItem(KEY,JSON.stringify(db));renderHome()}
+function renderHome(){document.getElementById('checks').innerHTML=checkItems.map((s,i)=>`<label class="check"><input type="checkbox" ${db.checks[dateKey()]?.['c'+i]?'checked':''} onchange="toggleCheck('c${i}',this.checked)"><span>${s}</span></label>`).join('');let n=checkItems.filter((_,i)=>db.checks[dateKey()]?.['c'+i]).length;document.getElementById('checkCount').textContent=n+'/'+checkItems.length+' siap';document.getElementById('checkBar').style.width=(n/checkItems.length*100)+'%';document.getElementById('dailyNote').value=db.notes[dateKey()]||''}
+function saveNote(){db.notes[dateKey()]=document.getElementById('dailyNote').value;localStorage.setItem(KEY,JSON.stringify(db));alert('Nota disimpan pada telefon.')}
+function saveHealth(){let r={date:dateKey(),weight:Number(document.getElementById('weight').value)||null,minutes:Number(document.getElementById('minutes').value)||0,activity:document.getElementById('activity').value,energy:document.getElementById('energy').value,symptoms:document.getElementById('symptoms').value,sleep:Number(document.getElementById('sleep').value)||null};db.health.unshift(r);persist();alert('Rekod kesihatan disimpan.')}
+function saveIncome(){let r={date:dateKey(),project:document.getElementById('project').value,revenue:Number(document.getElementById('revenue').value)||0,cost:Number(document.getElementById('cost').value)||0,action:document.getElementById('action').value};db.income.unshift(r);persist();document.getElementById('revenue').value='';document.getElementById('cost').value='';document.getElementById('action').value='';alert('Rekod pendapatan disimpan.')}
+function renderAll(){renderHome();document.getElementById('headerWeight').textContent=(db.health.find(x=>x.weight)?.weight||74)+' kg';document.getElementById('healthHistory').innerHTML=db.health.slice(0,6).map(x=>`<div class="entry"><b>${x.date}</b> · ${x.activity} · ${x.minutes} min · ${x.weight?x.weight+' kg':'tiada rekod berat'}<br><small>${x.energy}${x.symptoms?' · '+escapeHtml(x.symptoms):''}</small></div>`).join('')||'Belum ada rekod.';document.getElementById('incomeHistory').innerHTML=db.income.slice(0,8).map(x=>`<div class="entry"><b>${x.project}</b> · ${x.date}<br>Jualan ${money(x.revenue)} · Kos ${money(x.cost)} · <b>${money(x.revenue-x.cost)}</b><br><small>${escapeHtml(x.action||'Tiada nota tindakan')}</small></div>`).join('')||'<p class="muted">Belum ada transaksi.</p>';let sales=db.income.reduce((a,x)=>a+x.revenue,0),profit=db.income.reduce((a,x)=>a+x.revenue-x.cost,0),mins=db.health.reduce((a,x)=>a+x.minutes,0);document.getElementById('totalProfit').textContent=money(profit);document.getElementById('totalSales').textContent=money(sales);document.getElementById('reportProfit').textContent=money(profit);document.getElementById('totalMinutes').textContent=mins;document.getElementById('daysLogged').textContent=new Set([...db.health.map(x=>x.date),...db.income.map(x=>x.date),...Object.keys(db.checks)]).size;document.getElementById('morning').innerHTML=makeChecks(morningItems,'m');document.getElementById('night').innerHTML=makeChecks(nightItems,'n');drawChart()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function drawChart(){let c=document.getElementById('chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);let a=db.health.slice(0,7).reverse(),max=Math.max(20,...a.map(x=>x.minutes));ctx.strokeStyle='#dce7df';ctx.lineWidth=1;for(let j=0;j<5;j++){let y=15+j*45;ctx.beginPath();ctx.moveTo(35,y);ctx.lineTo(585,y);ctx.stroke()}a.forEach((x,i)=>{let bw=42,gap=32,xp=55+i*(bw+gap),h=x.minutes/max*170;ctx.fillStyle='#39845d';ctx.fillRect(xp,190-h,bw,h);ctx.fillStyle='#64746b';ctx.font='12px system-ui';ctx.fillText(x.date.slice(5),xp-3,211);ctx.fillText(String(x.minutes),xp+10,Math.max(12,180-h))});if(!a.length){ctx.fillStyle='#64746b';ctx.font='15px system-ui';ctx.fillText('Rekod senaman akan dipaparkan di sini.',80,110)}}
+function exportData(){let b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='zaki-daily-progress-backup-'+dateKey()+'.json';a.click();URL.revokeObjectURL(u)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.health||!x.income||!x.checks)throw 0;db=x;persist();alert('Backup berjaya dipulihkan.')}catch(err){alert('Fail backup tidak sah.')}};r.readAsText(f)}
+function clearData(){if(confirm('Betul-betul mahu padam semua rekod pada telefon ini? Eksport backup dahulu jika perlu.')){db=structuredClone(defaults);persist()}}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');if(b.dataset.tab==='report')drawChart()}));
+renderAll();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
